@@ -1,4 +1,7 @@
+*.bin
 .ipynb_checkpoints/
 *.h5
 *.txt
 *.zip
+__pycache__/*
+*.tsv
