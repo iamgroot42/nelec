@@ -1,6 +1,6 @@
 # EmoContext : A Shared Task on Contextual Emotion Detection in Text
 
-My submission to the 3rd SemEval-2019 task : EmoContext.
+Our submission to the 3rd SemEval-2019 task : EmoContext.
 
 ### Notebook includes:
 
