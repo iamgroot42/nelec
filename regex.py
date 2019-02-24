@@ -1,14 +1,16 @@
 import importlib, sys
+import utils
 importlib.reload(sys.modules['utils'])
 import utils
 
 import re
+import emoji
 
-def cleanText(text, remEmojis=True):
+def cleanText(text, remEmojis=2):
     text = text.lower()
     text = re.sub(r"’", "'", text)
     text = re.sub(r"`", "'", text)
-    
+
     text = re.sub(r"\b[u]+\b", "you", text)
     text = re.sub(r"\bm\b", "am", text)
     text = re.sub(r"\bn\b", "and", text)
@@ -86,7 +88,7 @@ def cleanText(text, remEmojis=True):
     text = re.sub(r"\blet’s\b", "let us", text)
     text = re.sub(r"\bilove\b", "i love", text)
     text = re.sub(r"\bcleverbot\b", "clever bot", text)
-        
+
     text = re.sub(r"\bmurgi\b", "chicken", text)
     text = re.sub(r"\boky\b", "okay", text)
     text = re.sub(r"\bi’ve\b", "i have", text)
@@ -95,7 +97,7 @@ def cleanText(text, remEmojis=True):
     text = re.sub(r"\bsrsly\b", "seriously", text)
     text = re.sub(r"\bi'd\b", "i would", text)
     text = re.sub(r"\bshouldve\b", "should have", text)
-        
+
     text = re.sub(r"\bcouldn't\b", "could not", text)
     text = re.sub(r"\bthey're\b", "they are", text)
     text = re.sub(r"\bit’s\b", "it is", text)
@@ -202,17 +204,19 @@ def cleanText(text, remEmojis=True):
     text = re.sub(r"\bevrything\b", "everything", text)
     text = re.sub(r"\bhistery\b", "history", text)
     text = re.sub(r"\biam\b", "i am", text)
-        
-    emojis = ['‑c', '🖑', ' 8‑d', ' ‑d', '：）', '.', '?', '!', ',',
-              '-', '・', "'-'", '\U0001f923','・ω・', '\U000fe339', ' ‑c', '_',
-             ':/', ':\\', ':p', ':)', ':d', ':(', ';)', '<3', '&', ':^)', ':]',
-              ':3', '"', ':*', ':|', '~', '(:', ')', '(', ';]', ':o']
-    
-    if remEmojis:
-        # Remove eomjis
-        text = utils.remove_emoji(text)
-        for emoji in emojis:
-            text = text.replace(emoji, "")
+
+    emojis = list(emoji.UNICODE_EMOJI.keys())
+
+    if remEmojis > 0:
+        for emo in emojis:
+            try:
+                if remEmojis == 2:
+                    text = re.sub(r'%s+' %  emo, "", text)
+                else:
+                    text = re.sub(r'%s+' %  emo, emo, text)
+            except:
+                continue
+
 
     text = re.sub(r"\b[y]+\b", "why", text)
     text = re.sub(r"\bpl[s]+\b", "please", text)
@@ -352,7 +356,7 @@ def cleanText(text, remEmojis=True):
     text = re.sub(r"\byout\b", "your", text)
     text = re.sub(r"\bdoesnot\b", "does not", text)
     text = re.sub(r"\bjoaking\b", "joking", text)
-    
+
     text = re.sub(r"\bunderstant\b", "understand", text)
     text = re.sub(r"\btheb\b", "then", text)
     text = re.sub(r"\btimw\b", "time", text)
@@ -473,6 +477,5 @@ def cleanText(text, remEmojis=True):
     text = re.sub(r"\bfotographs\b", "photographs", text)
     text = re.sub(r"\bjudw[a]+\b", "twin", text)
     text = re.sub(r"\bjudw[a]+\b", "twin", text)
-    
-    
+
     return text

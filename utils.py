@@ -10,8 +10,8 @@ from keras.models import Sequential, load_model, Model
 from keras.layers import concatenate, Activation, GlobalAveragePooling1D, GlobalMaxPooling1D, Layer, Dense, Embedding, LSTM, GRU, Dropout, SpatialDropout1D, Input, Average, Bidirectional, BatchNormalization
 from keras.callbacks import Callback
 from keras import initializers, regularizers, constraints, optimizers, layers
+import gensim.models as gsm
 
-import emoji
 import re
 
 import json, argparse, os
@@ -75,14 +75,22 @@ def split_into_three(texts, tknzr):
     return (tokenize(left), tokenize(middle), tokenize(right))
 
 
+def add_emoji_embedding(wordIndex, existingEmbedding):
+    e2v = gsm.KeyedVectors.load_word2vec_format('./emoji2vec/pre-trained/emoji2vec.bin', binary=True)
+    count, total= 0, 0
+    for word, i in wordIndex.items():
+        total += 1
+        try:
+            embeddingVector = e2v.get_vector(word)
+            existingEmbedding[i] = embeddingVector
+            count += 1
+        except:
+            continue
+    print("Found embedding for", str((100 * count) / total), "% embeddings")
+    return existingEmbedding
+
+
 def getEmbeddingMatrix(wordIndex, EMBEDDING_DIM):
-    """Populate an embedding matrix using a word-index. If the word "happy" has an index 19,
-       the 19th row in the embedding matrix should contain the embedding vector for the word "happy".
-    Input:
-        wordIndex : A dictionary of (word : index) pairs, extracted using a tokeniser
-    Output:
-        embeddingMatrix : A matrix where every row has 100 dimensional GloVe embedding
-    """
     embeddingsIndex = {}
     # Load the embedding vectors from ther GloVe file
     with io.open(os.path.join('./glove.6B.%dd.txt' % EMBEDDING_DIM), encoding="utf8") as f:
@@ -95,6 +103,7 @@ def getEmbeddingMatrix(wordIndex, EMBEDDING_DIM):
     print('Found %s word vectors.' % len(embeddingsIndex))
     
     oov = []
+    oov_indices = []
     # Minimum word index of any word is 1. 
     embeddingMatrix = np.zeros((len(wordIndex) + 1, EMBEDDING_DIM))
     count, total= 0, 0
@@ -106,10 +115,11 @@ def getEmbeddingMatrix(wordIndex, EMBEDDING_DIM):
             embeddingMatrix[i] = embeddingVector
             count += 1
         else:
+            oov_indices.append(wordIndex.get(word))
             oov.append(word)
     
     print("Found embedding for", str((100 * count) / total), "% embeddings")
-    return embeddingMatrix, oov
+    return embeddingMatrix, oov, oov_indices
 
 
 # https://www.kaggle.com/hireme/fun-api-keras-f1-metric-cyclical-learning-rate/code
@@ -396,20 +406,3 @@ def microF1Loss(ground, predictions):
     microF1 = ( 2 * microRecall * microPrecision ) / (microPrecision + microRecall + + K.epsilon())
     
     return microF1
-
-
-def remove_emoji(string):
-    emoji_pattern = re.compile("["
-                           u"\U0001F600-\U0001F64F"  # emoticons
-                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                           u"\U00002702-\U000027B0"
-                           u"\U000024C2-\U0001F251"
-                           "]+", flags=re.UNICODE)
-    our_string = emoji_pattern.sub(r'', string)
-    needed_string = ""
-    for char in our_string:
-        if not (char in emoji.UNICODE_EMOJI):
-            needed_string += char
-    return needed_string

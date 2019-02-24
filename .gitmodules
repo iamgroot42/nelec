@@ -1,0 +1,3 @@
+[submodule "emoji2vec"]
+	path = emoji2vec
+	url = https://github.com/uclmr/emoji2vec.git
