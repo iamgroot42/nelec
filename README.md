@@ -11,7 +11,7 @@ Our submission (NELEC) to the 3rd SemEval-2019 task : EmoContext.
 
 ### NELEC Source Code
 
-* THe source code for NELEC is implemented in a proprietary internal Microsoft tool, and thus cannot be open-sourced. Contact either of the authors to know more. 
+* The source code for NELEC is implemented in a proprietary internal Microsoft tool, and thus cannot be open-sourced. Contact either of the authors to know more. 
 
 ### Coming Soon
 * Implementation of NELEC in Python
