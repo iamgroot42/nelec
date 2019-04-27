@@ -1,6 +1,7 @@
 # NELEC at EmoContext : A Shared Task on Contextual Emotion Detection in Text
 
 Our submission (NELEC) to the 3rd SemEval-2019 task : EmoContext.
+Pre-print (arXiv) available [https://arxiv.org/pdf/1904.03223.pdf](here)
 
 ### Notebook includes:
 
